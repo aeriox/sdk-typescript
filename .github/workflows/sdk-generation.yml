@@ -1,0 +1,29 @@
+name: Generate SDK
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force regenerate even if no spec changes'
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 9 * * 1'  # Mondays 9am UTC
+
+jobs:
+  generate:
+    name: Generate SDK
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - uses: speakeasy-api/sdk-generation-action@v15
+        with:
+          force: ${{ github.event.inputs.force == 'true' }}
+          mode: pr
+          speakeasy_version: latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPEAKEASY_API_KEY: ${{ secrets.SPEAKEASY_API_KEY }}

@@ -1,0 +1,14 @@
+configVersion: 2.0.0
+generation:
+  sdkClassName: Aeriox
+  baseServerURL: https://api.aeriox.co
+  usageSnippets:
+    optionalPropertyRendering: withExample
+typescript:
+  version: 0.1.0
+  packageName: "@aeriox-co/api"
+  author: AERIOX
+  clientServerStatusCodesAsErrors: true
+  flattenGlobalSecurity: true
+  enableSourceMaps: true
+  responseFormat: flat
