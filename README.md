@@ -1,4 +1,4 @@
-# @aeriox/api
+# @aeriox-co/api
 
 The TypeScript SDK for the [AERIOX Studio public API](https://create.aeriox.co/docs).
 
@@ -7,13 +7,13 @@ The TypeScript SDK for the [AERIOX Studio public API](https://create.aeriox.co/d
 ## Installation
 
 ```bash
-npm install @aeriox/api
+npm install @aeriox-co/api
 ```
 
 ## Quick start
 
 ```typescript
-import { Aeriox } from '@aeriox/api';
+import { Aeriox } from '@aeriox-co/api';
 
 const sdk = new Aeriox({
   apiKey: process.env.AERIOX_API_KEY,  // sk_live_*
