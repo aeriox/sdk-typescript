@@ -10,6 +10,13 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Phase 4 cross-cutting security review (Finding 5, MEDIUM):
+    # gate npm publish behind a GitHub Environment so a tag push
+    # alone cannot ship a release. The Environment `npm-publish`
+    # must be configured in Settings -> Environments with at least
+    # one Required reviewer; the workflow will pause on the
+    # reviewer-approval gate before any `npm publish` step runs.
+    environment: npm-publish
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
