@@ -1,0 +1,31 @@
+speakeasyVersion: 1.762.0
+sources:
+    aeriox-api:
+        sourceNamespace: aeriox-api
+        sourceRevisionDigest: sha256:026152b312a9e06524b70821234ea74b90abb6b41c01e3699f67efac435339ee
+        sourceBlobDigest: sha256:b64295119114675ecb7d597517917d61fb0246489320e6a6d55dcd1ee855a415
+        tags:
+            - latest
+            - 1.0.0
+targets:
+    aeriox-typescript:
+        source: aeriox-api
+        sourceNamespace: aeriox-api
+        sourceRevisionDigest: sha256:026152b312a9e06524b70821234ea74b90abb6b41c01e3699f67efac435339ee
+        sourceBlobDigest: sha256:b64295119114675ecb7d597517917d61fb0246489320e6a6d55dcd1ee855a415
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        aeriox-api:
+            inputs:
+                - location: https://api.aeriox.co/openapi.json
+            registry:
+                location: registry.speakeasyapi.dev/aeriox/aeriox/aeriox-api
+    targets:
+        aeriox-typescript:
+            target: typescript
+            source: aeriox-api
+            publish:
+                npm:
+                    token: $npm_token
