@@ -43,3 +43,509 @@ Releases publish via npm Trusted Publishing on tag push. Tag `v1.0.0` to ship th
 ## License
 
 MIT
+
+<!-- Start Summary [summary] -->
+## Summary
+
+AERIOX Studio API: Programmatic access to AERIOX Studio's creative OS. Generate images,
+videos, voice; train custom characters; apply prism presets;
+manage wallet balance.
+
+**Audience priority:** MCP-native agents → indie developers → agencies → enterprise.
+
+**Authentication:** API keys (`Authorization: Bearer sk_live_*` or `x-api-key:` header).
+OAuth 2.0 PKCE flow available for end-user-facing apps.
+
+**Pricing:** USD-denominated PAYG wallet. `$5` free trial on first key,
+`$5` minimum top-up via Stripe. Every cost-bearing call is atomically
+reserved against the wallet before dispatch and refunded on provider failure.
+<!-- End Summary [summary] -->
+
+<!-- Start Table of Contents [toc] -->
+## Table of Contents
+<!-- $toc-max-depth=2 -->
+* [@aeriox-co/api](#aeriox-coapi)
+  * [Install](#install)
+  * [Usage](#usage)
+  * [Authentication](#authentication)
+  * [Development](#development)
+  * [License](#license)
+  * [SDK Installation](#sdk-installation)
+  * [Requirements](#requirements)
+  * [SDK Example Usage](#sdk-example-usage)
+  * [Authentication](#authentication-1)
+  * [Available Resources and Operations](#available-resources-and-operations)
+  * [Standalone functions](#standalone-functions)
+  * [Retries](#retries)
+  * [Error Handling](#error-handling)
+  * [Server Selection](#server-selection)
+  * [Custom HTTP Client](#custom-http-client)
+  * [Debugging](#debugging)
+
+<!-- End Table of Contents [toc] -->
+
+<!-- Start SDK Installation [installation] -->
+## SDK Installation
+
+The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [bun](https://bun.sh/) or [yarn](https://classic.yarnpkg.com/en/) package managers.
+
+### NPM
+
+```bash
+npm add @aeriox-co/api
+```
+
+### PNPM
+
+```bash
+pnpm add @aeriox-co/api
+```
+
+### Bun
+
+```bash
+bun add @aeriox-co/api
+```
+
+### Yarn
+
+```bash
+yarn add @aeriox-co/api
+```
+
+> [!NOTE]
+> This package is published as an ES Module (ESM) only. For applications using
+> CommonJS, use `await import("@aeriox-co/api")` to import and use this package.
+<!-- End SDK Installation [installation] -->
+
+<!-- Start Requirements [requirements] -->
+## Requirements
+
+For supported JavaScript runtimes, please consult [RUNTIMES.md](RUNTIMES.md).
+<!-- End Requirements [requirements] -->
+
+<!-- Start SDK Example Usage [usage] -->
+## SDK Example Usage
+
+### Example
+
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox();
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec();
+
+  console.log(result);
+}
+
+run();
+
+```
+<!-- End SDK Example Usage [usage] -->
+
+<!-- Start Authentication [security] -->
+## Authentication
+
+### Per-Client Security Schemes
+
+This SDK supports the following security schemes globally:
+
+| Name           | Type   | Scheme      |
+| -------------- | ------ | ----------- |
+| `apiKey`       | http   | HTTP Bearer |
+| `apiKeyHeader` | apiKey | API key     |
+
+You can set the security parameters through the `security` optional parameter when initializing the SDK client instance. The selected scheme will be used by default to authenticate with the API for all operations that support it. For example:
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox({
+  security: {
+    apiKey: "<YOUR_BEARER_TOKEN_HERE>",
+  },
+});
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec();
+
+  console.log(result);
+}
+
+run();
+
+```
+<!-- End Authentication [security] -->
+
+<!-- Start Available Resources and Operations [operations] -->
+## Available Resources and Operations
+
+<details open>
+<summary>Available methods</summary>
+
+### [APIKeys](docs/sdks/apikeys/README.md)
+
+* [getMe](docs/sdks/apikeys/README.md#getme) - Get current API key + workspace
+* [rotateApiKey](docs/sdks/apikeys/README.md#rotateapikey) - Rotate an API key
+* [oauthAuthorize](docs/sdks/apikeys/README.md#oauthauthorize) - Begin OAuth 2.0 PKCE authorization
+* [oauthToken](docs/sdks/apikeys/README.md#oauthtoken) - Exchange authorization code or refresh token for an access token
+* [oauthRevoke](docs/sdks/apikeys/README.md#oauthrevoke) - Revoke an OAuth access or refresh token
+* [oauthJwks](docs/sdks/apikeys/README.md#oauthjwks) - JSON Web Key Set for OAuth access token verification
+
+### [Characters](docs/sdks/characters/README.md)
+
+* [createCharacter](docs/sdks/characters/README.md#createcharacter) - Create + train a custom character from reference images
+* [listCharacters](docs/sdks/characters/README.md#listcharacters) - List workspace characters (cursor-paginated)
+* [getCharacter](docs/sdks/characters/README.md#getcharacter) - Fetch a single character
+* [deleteCharacter](docs/sdks/characters/README.md#deletecharacter) - Soft-delete a character
+
+### [Discovery](docs/sdks/discovery/README.md)
+
+* [getOpenApiSpec](docs/sdks/discovery/README.md#getopenapispec) - Fetch the AERIOX OpenAPI 3.1 spec as JSON
+* [getPricing](docs/sdks/discovery/README.md#getpricing) - Get USD price list for all operations
+* [estimateGeneration](docs/sdks/discovery/README.md#estimategeneration) - Estimate cost and feasibility for a generation
+* [listModels](docs/sdks/discovery/README.md#listmodels) - Capability + price catalog for every supported model
+
+### [Generation](docs/sdks/generation/README.md)
+
+* [generateImage](docs/sdks/generation/README.md#generateimage) - Generate an image
+* [generateVideo](docs/sdks/generation/README.md#generatevideo) - Generate a video
+* [generateAudio](docs/sdks/generation/README.md#generateaudio) - Generate audio (text-to-speech)
+* [composeVideo](docs/sdks/generation/README.md#composevideo) - Stitch multiple assets into a single video
+* [~~createGeneration~~](docs/sdks/generation/README.md#creategeneration) - (Deprecated) Submit a generation job :warning: **Deprecated**
+* [listNodes](docs/sdks/generation/README.md#listnodes) - List cards (legacy `nodes` alias)
+* [createNode](docs/sdks/generation/README.md#createnode) - Create a card (legacy `nodes` alias)
+* [getNode](docs/sdks/generation/README.md#getnode) - Get a single card with outgoing edges
+* [deleteNode](docs/sdks/generation/README.md#deletenode) - Soft-delete a card
+* [searchCards](docs/sdks/generation/README.md#searchcards) - Semantic search across the workspace card library
+* [renderCard](docs/sdks/generation/README.md#rendercard) - Render a card's structured back-side payload
+
+### [Jobs](docs/sdks/jobs/README.md)
+
+* [~~getGeneration~~](docs/sdks/jobs/README.md#getgeneration) - (Deprecated) Poll generation status :warning: **Deprecated**
+* [getJob](docs/sdks/jobs/README.md#getjob) - Poll unified job status
+* [cancelJob](docs/sdks/jobs/README.md#canceljob) - Cancel a queued or running job
+
+### [Prisms](docs/sdks/prisms/README.md)
+
+* [listPrisms](docs/sdks/prisms/README.md#listprisms) - Catalog of preset prisms
+* [applyPrism](docs/sdks/prisms/README.md#applyprism) - Apply a prism to an asset or new generation
+
+### [Wallet](docs/sdks/wallet/README.md)
+
+* [getWallet](docs/sdks/wallet/README.md#getwallet) - Get wallet balance and recent transactions
+* [topUpWallet](docs/sdks/wallet/README.md#topupwallet) - Create a Stripe PaymentIntent to credit the wallet
+* [configureAutoRecharge](docs/sdks/wallet/README.md#configureautorecharge) - Configure or clear wallet auto-recharge
+* [~~getCredits~~](docs/sdks/wallet/README.md#getcredits) - (Deprecated) Get legacy credit balance :warning: **Deprecated**
+
+</details>
+<!-- End Available Resources and Operations [operations] -->
+
+<!-- Start Standalone functions [standalone-funcs] -->
+## Standalone functions
+
+All the methods listed above are available as standalone functions. These
+functions are ideal for use in applications running in the browser, serverless
+runtimes or other environments where application bundle size is a primary
+concern. When using a bundler to build your application, all unused
+functionality will be either excluded from the final bundle or tree-shaken away.
+
+To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
+
+<details>
+
+<summary>Available standalone functions</summary>
+
+- [`apiKeysGetMe`](docs/sdks/apikeys/README.md#getme) - Get current API key + workspace
+- [`apiKeysOauthAuthorize`](docs/sdks/apikeys/README.md#oauthauthorize) - Begin OAuth 2.0 PKCE authorization
+- [`apiKeysOauthJwks`](docs/sdks/apikeys/README.md#oauthjwks) - JSON Web Key Set for OAuth access token verification
+- [`apiKeysOauthRevoke`](docs/sdks/apikeys/README.md#oauthrevoke) - Revoke an OAuth access or refresh token
+- [`apiKeysOauthToken`](docs/sdks/apikeys/README.md#oauthtoken) - Exchange authorization code or refresh token for an access token
+- [`apiKeysRotateAPIKey`](docs/sdks/apikeys/README.md#rotateapikey) - Rotate an API key
+- [`charactersCreateCharacter`](docs/sdks/characters/README.md#createcharacter) - Create + train a custom character from reference images
+- [`charactersDeleteCharacter`](docs/sdks/characters/README.md#deletecharacter) - Soft-delete a character
+- [`charactersGetCharacter`](docs/sdks/characters/README.md#getcharacter) - Fetch a single character
+- [`charactersListCharacters`](docs/sdks/characters/README.md#listcharacters) - List workspace characters (cursor-paginated)
+- [`discoveryEstimateGeneration`](docs/sdks/discovery/README.md#estimategeneration) - Estimate cost and feasibility for a generation
+- [`discoveryGetOpenApiSpec`](docs/sdks/discovery/README.md#getopenapispec) - Fetch the AERIOX OpenAPI 3.1 spec as JSON
+- [`discoveryGetPricing`](docs/sdks/discovery/README.md#getpricing) - Get USD price list for all operations
+- [`discoveryListModels`](docs/sdks/discovery/README.md#listmodels) - Capability + price catalog for every supported model
+- [`generationComposeVideo`](docs/sdks/generation/README.md#composevideo) - Stitch multiple assets into a single video
+- [`generationCreateNode`](docs/sdks/generation/README.md#createnode) - Create a card (legacy `nodes` alias)
+- [`generationDeleteNode`](docs/sdks/generation/README.md#deletenode) - Soft-delete a card
+- [`generationGenerateAudio`](docs/sdks/generation/README.md#generateaudio) - Generate audio (text-to-speech)
+- [`generationGenerateImage`](docs/sdks/generation/README.md#generateimage) - Generate an image
+- [`generationGenerateVideo`](docs/sdks/generation/README.md#generatevideo) - Generate a video
+- [`generationGetNode`](docs/sdks/generation/README.md#getnode) - Get a single card with outgoing edges
+- [`generationListNodes`](docs/sdks/generation/README.md#listnodes) - List cards (legacy `nodes` alias)
+- [`generationRenderCard`](docs/sdks/generation/README.md#rendercard) - Render a card's structured back-side payload
+- [`generationSearchCards`](docs/sdks/generation/README.md#searchcards) - Semantic search across the workspace card library
+- [`jobsCancelJob`](docs/sdks/jobs/README.md#canceljob) - Cancel a queued or running job
+- [`jobsGetJob`](docs/sdks/jobs/README.md#getjob) - Poll unified job status
+- [`prismsApplyPrism`](docs/sdks/prisms/README.md#applyprism) - Apply a prism to an asset or new generation
+- [`prismsListPrisms`](docs/sdks/prisms/README.md#listprisms) - Catalog of preset prisms
+- [`walletConfigureAutoRecharge`](docs/sdks/wallet/README.md#configureautorecharge) - Configure or clear wallet auto-recharge
+- [`walletGetWallet`](docs/sdks/wallet/README.md#getwallet) - Get wallet balance and recent transactions
+- [`walletTopUpWallet`](docs/sdks/wallet/README.md#topupwallet) - Create a Stripe PaymentIntent to credit the wallet
+- ~~[`generationCreateGeneration`](docs/sdks/generation/README.md#creategeneration)~~ - (Deprecated) Submit a generation job :warning: **Deprecated**
+- ~~[`jobsGetGeneration`](docs/sdks/jobs/README.md#getgeneration)~~ - (Deprecated) Poll generation status :warning: **Deprecated**
+- ~~[`walletGetCredits`](docs/sdks/wallet/README.md#getcredits)~~ - (Deprecated) Get legacy credit balance :warning: **Deprecated**
+
+</details>
+<!-- End Standalone functions [standalone-funcs] -->
+
+<!-- Start Retries [retries] -->
+## Retries
+
+Some of the endpoints in this SDK support retries.  If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API.  However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
+
+To change the default retry strategy for a single API call, simply provide a retryConfig object to the call:
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox();
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec({
+    retries: {
+      strategy: "backoff",
+      backoff: {
+        initialInterval: 1,
+        maxInterval: 50,
+        exponent: 1.1,
+        maxElapsedTime: 100,
+      },
+      retryConnectionErrors: false,
+    },
+  });
+
+  console.log(result);
+}
+
+run();
+
+```
+
+If you'd like to override the default retry strategy for all operations that support retries, you can provide a retryConfig at SDK initialization:
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox({
+  retryConfig: {
+    strategy: "backoff",
+    backoff: {
+      initialInterval: 1,
+      maxInterval: 50,
+      exponent: 1.1,
+      maxElapsedTime: 100,
+    },
+    retryConnectionErrors: false,
+  },
+});
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec();
+
+  console.log(result);
+}
+
+run();
+
+```
+<!-- End Retries [retries] -->
+
+<!-- Start Error Handling [errors] -->
+## Error Handling
+
+[`AerioxError`](./src/models/errors/aeriox-error.ts) is the base class for all HTTP error responses. It has the following properties:
+
+| Property            | Type       | Description                                                                             |
+| ------------------- | ---------- | --------------------------------------------------------------------------------------- |
+| `error.message`     | `string`   | Error message                                                                           |
+| `error.statusCode`  | `number`   | HTTP response status code eg `404`                                                      |
+| `error.headers`     | `Headers`  | HTTP response headers                                                                   |
+| `error.body`        | `string`   | HTTP body. Can be empty string if no body is returned.                                  |
+| `error.rawResponse` | `Response` | Raw HTTP response                                                                       |
+| `error.data$`       |            | Optional. Some errors may contain structured data. [See Error Classes](#error-classes). |
+
+### Example
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+import * as errors from "@aeriox-co/api/models/errors";
+
+const aeriox = new Aeriox();
+
+async function run() {
+  try {
+    const result = await aeriox.discovery.getPricing();
+
+    console.log(result);
+  } catch (error) {
+    // The base class for HTTP error responses
+    if (error instanceof errors.AerioxError) {
+      console.log(error.message);
+      console.log(error.statusCode);
+      console.log(error.body);
+      console.log(error.headers);
+
+      // Depending on the method different errors may be thrown
+      if (error instanceof errors.ErrorT) {
+        console.log(error.data$.error); // models.ErrorT
+      }
+    }
+  }
+}
+
+run();
+
+```
+
+### Error Classes
+**Primary errors:**
+* [`AerioxError`](./src/models/errors/aeriox-error.ts): The base class for HTTP error responses.
+  * [`ErrorT`](./src/models/errors/error-t.ts): Missing or invalid API key. *
+
+<details><summary>Less common errors (6)</summary>
+
+<br />
+
+**Network errors:**
+* [`ConnectionError`](./src/models/errors/http-client-errors.ts): HTTP client was unable to make a request to a server.
+* [`RequestTimeoutError`](./src/models/errors/http-client-errors.ts): HTTP request timed out due to an AbortSignal signal.
+* [`RequestAbortedError`](./src/models/errors/http-client-errors.ts): HTTP request was aborted by the client.
+* [`InvalidRequestError`](./src/models/errors/http-client-errors.ts): Any input used to create a request is invalid.
+* [`UnexpectedClientError`](./src/models/errors/http-client-errors.ts): Unrecognised or unexpected error.
+
+
+**Inherit from [`AerioxError`](./src/models/errors/aeriox-error.ts)**:
+* [`ResponseValidationError`](./src/models/errors/response-validation-error.ts): Type mismatch between the data returned from the server and the structure expected by the SDK. See `error.rawValue` for the raw value and `error.pretty()` for a nicely formatted multi-line string.
+
+</details>
+
+\* Check [the method documentation](#available-resources-and-operations) to see if the error is applicable.
+<!-- End Error Handling [errors] -->
+
+<!-- Start Server Selection [server] -->
+## Server Selection
+
+### Select Server by Index
+
+You can override the default server globally by passing a server index to the `serverIdx: number` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
+
+| #   | Server                          | Description               |
+| --- | ------------------------------- | ------------------------- |
+| 0   | `https://api.aeriox.co`         | Production                |
+| 1   | `https://api-staging.aeriox.co` | Staging (preview deploys) |
+
+#### Example
+
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox({
+  serverIdx: 0,
+});
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec();
+
+  console.log(result);
+}
+
+run();
+
+```
+
+### Override Server URL Per-Client
+
+The default server can also be overridden globally by passing a URL to the `serverURL: string` optional parameter when initializing the SDK client instance. For example:
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const aeriox = new Aeriox({
+  serverURL: "https://api-staging.aeriox.co",
+});
+
+async function run() {
+  const result = await aeriox.discovery.getOpenApiSpec();
+
+  console.log(result);
+}
+
+run();
+
+```
+<!-- End Server Selection [server] -->
+
+<!-- Start Custom HTTP Client [http-client] -->
+## Custom HTTP Client
+
+The TypeScript SDK makes API calls using an `HTTPClient` that wraps the native
+[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). This
+client is a thin wrapper around `fetch` and provides the ability to attach hooks
+around the request lifecycle that can be used to modify the request or handle
+errors and response.
+
+The `HTTPClient` constructor takes an optional `fetcher` argument that can be
+used to integrate a third-party HTTP client or when writing tests to mock out
+the HTTP client and feed in fixtures.
+
+The following example shows how to:
+- route requests through a proxy server using [undici](https://www.npmjs.com/package/undici)'s ProxyAgent
+- use the `"beforeRequest"` hook to add a custom header and a timeout to requests
+- use the `"requestError"` hook to log errors
+
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+import { ProxyAgent } from "undici";
+import { HTTPClient } from "@aeriox-co/api/lib/http";
+
+const dispatcher = new ProxyAgent("http://proxy.example.com:8080");
+
+const httpClient = new HTTPClient({
+  // 'fetcher' takes a function that has the same signature as native 'fetch'.
+  fetcher: (input, init) =>
+    // 'dispatcher' is specific to undici and not part of the standard Fetch API.
+    fetch(input, { ...init, dispatcher } as RequestInit),
+});
+
+httpClient.addHook("beforeRequest", (request) => {
+  const nextRequest = new Request(request, {
+    signal: request.signal || AbortSignal.timeout(5000)
+  });
+
+  nextRequest.headers.set("x-custom-header", "custom value");
+
+  return nextRequest;
+});
+
+httpClient.addHook("requestError", (error, request) => {
+  console.group("Request Error");
+  console.log("Reason:", `${error}`);
+  console.log("Endpoint:", `${request.method} ${request.url}`);
+  console.groupEnd();
+});
+
+const sdk = new Aeriox({ httpClient: httpClient });
+```
+<!-- End Custom HTTP Client [http-client] -->
+
+<!-- Start Debugging [debug] -->
+## Debugging
+
+You can setup your SDK to emit debug logs for SDK requests and responses.
+
+You can pass a logger that matches `console`'s interface as an SDK option.
+
+> [!WARNING]
+> Beware that debug logging will reveal secrets, like API tokens in headers, in log messages printed to a console or files. It's recommended to use this feature only during local development and not in production.
+
+```typescript
+import { Aeriox } from "@aeriox-co/api";
+
+const sdk = new Aeriox({ debugLogger: console });
+```
+<!-- End Debugging [debug] -->
+
+<!-- Placeholder for Future Speakeasy SDK Sections -->
