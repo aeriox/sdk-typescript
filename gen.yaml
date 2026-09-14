@@ -41,6 +41,7 @@ typescript:
   additionalPackageJSON: {}
   additionalScripts: {}
   alwaysIncludeInboundAndOutbound: false
+  apiPromiseHelpers: false
   author: AERIOX
   baseErrorName: AerioxError
   clientServerStatusCodesAsErrors: true
@@ -51,6 +52,7 @@ typescript:
   enableReactQuery: false
   enableSourceMaps: true
   enumFormat: union
+  eventStreamClassName: EventStream
   exportZodModelNamespace: false
   fixEnumNameSanitization: false
   flatAdditionalProperties: true
@@ -82,6 +84,8 @@ typescript:
   packageName: '@aeriox-co/api'
   preApplyUnionDiscriminators: true
   preserveModelFieldNames: false
+  privateIdentifierPrefix: '#'
+  requestExtras: false
   responseFormat: flat
   sseFlatResponse: false
   templateVersion: v2
