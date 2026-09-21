@@ -3,6 +3,7 @@
  */
 
 export * from "./character.js";
+export * from "./compose-job-ack.js";
 export * from "./compose-request.js";
 export * from "./error.js";
 export * from "./generate-audio-request.js";
