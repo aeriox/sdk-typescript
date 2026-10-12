@@ -48,7 +48,7 @@
     "url": "https://github.com/aeriox/sdk-typescript.git"
   },
   "scripts": {
-    "lint": "oxlint --max-warnings=0 --deny-warnings src/**/*.ts src/**/*.tsx",
+    "lint": "oxlint --max-warnings=0 --deny-warnings --no-error-on-unmatched-pattern src",
     "build": "tsgo",
     "prepublishOnly": "npm run build"
   },
