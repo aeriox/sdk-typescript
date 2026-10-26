@@ -6,24 +6,28 @@
 import { ComposeVideoResponse } from "@aeriox-co/api/models/operations";
 
 let value: ComposeVideoResponse = {
-  headers: {},
+  headers: {
+    "key": [
+      "<value 1>",
+      "<value 2>",
+      "<value 3>",
+    ],
+  },
   result: {
-    jobId: "c4e68329-ad78-4034-95e9-19920a47cf2d",
+    id: "239c54b0-75fd-4768-8c96-eb90b91cbe07",
     type: "compose",
-    status: "cancelled",
-    error: {
-      error: {
-        code: "insufficient_funds",
-      },
-    },
-    createdAt: new Date("2024-04-15T02:02:37.416Z"),
+    status: "queued",
+    operationId: "compose.stitch_per_minute",
+    estimatedCostUsdMicros: 879434,
+    estimatedCostUsd: 2284.11,
+    createdAt: new Date("2024-07-03T02:39:01.919Z"),
   },
 };
 ```
 
 ## Fields
 
-| Field                             | Type                              | Required                          | Description                       |
-| --------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- |
-| `headers`                         | Record<string, *string*[]>        | :heavy_check_mark:                | N/A                               |
-| `result`                          | [models.Job](../../models/job.md) | :heavy_check_mark:                | N/A                               |
+| Field                                                   | Type                                                    | Required                                                | Description                                             |
+| ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| `headers`                                               | Record<string, *string*[]>                              | :heavy_check_mark:                                      | N/A                                                     |
+| `result`                                                | [models.ComposeJobAck](../../models/compose-job-ack.md) | :heavy_check_mark:                                      | N/A                                                     |
