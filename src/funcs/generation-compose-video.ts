@@ -33,9 +33,12 @@ import { Result } from "../types/fp.js";
  *
  * @remarks
  * Multi-shot video composition. Takes asset references and segment
- * timing, returns a queued composition job. Phase 3 ships the wallet
- * + concurrency contract; dispatch implementation lands Phase 4
- * (returns 501 with refund until then).
+ * timing, returns a queued composition job that is dispatched to a
+ * Vercel Sandbox microVM running ffmpeg. The 202 response carries
+ * the job id (and the wallet reservation snapshot); poll
+ * `GET /v1/jobs/{id}` until the job reaches a terminal state
+ * (`completed` / `failed` / `cancelled`) — the stitched output URL
+ * appears in the polled job's `output_urls` field.
  */
 export function generationComposeVideo(
   client: AerioxCore,
@@ -167,7 +170,6 @@ async function $do(
     }),
     M.jsonErr([400, 401, 402], errors.ErrorT$inboundSchema),
     M.jsonErr(429, errors.ErrorT$inboundSchema, { hdrs: true }),
-    M.jsonErr(501, errors.ErrorT$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });
