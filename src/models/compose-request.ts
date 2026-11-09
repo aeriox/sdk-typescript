@@ -8,6 +8,9 @@ import { ClosedEnum } from "../types/enums.js";
 
 export type Segment = {
   assetId: string;
+  /**
+   * Position of this segment on the output timeline, in seconds. Each asset plays from its own start for `duration` seconds; segments are joined in array order.
+   */
   startTime: number;
   duration: number;
   effects?: { [k: string]: any } | undefined;

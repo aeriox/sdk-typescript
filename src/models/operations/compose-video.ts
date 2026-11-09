@@ -11,7 +11,7 @@ import * as models from "../index.js";
 
 export type ComposeVideoResponse = {
   headers: { [k: string]: Array<string> };
-  result: models.Job;
+  result: models.ComposeJobAck;
 };
 
 /** @internal */
@@ -21,7 +21,7 @@ export const ComposeVideoResponse$inboundSchema: z.ZodMiniType<
 > = z.pipe(
   z.object({
     Headers: z._default(z.record(z.string(), z.array(z.string())), {}),
-    Result: models.Job$inboundSchema,
+    Result: models.ComposeJobAck$inboundSchema,
   }),
   z.transform((v) => {
     return remap$(v, {

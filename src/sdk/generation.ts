@@ -78,9 +78,12 @@ export class Generation extends ClientSDK {
    *
    * @remarks
    * Multi-shot video composition. Takes asset references and segment
-   * timing, returns a queued composition job. Phase 3 ships the wallet
-   * + concurrency contract; dispatch implementation lands Phase 4
-   * (returns 501 with refund until then).
+   * timing, returns a queued composition job that is dispatched to a
+   * Vercel Sandbox microVM running ffmpeg. The 202 response carries
+   * the job id (and the wallet reservation snapshot); poll
+   * `GET /v1/jobs/{id}` until the job reaches a terminal state
+   * (`completed` / `failed` / `cancelled`) — the stitched output URL
+   * appears in the polled job's `output_urls` field.
    */
   async composeVideo(
     request: models.ComposeRequest,
